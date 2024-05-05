@@ -9,4 +9,3 @@ public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TComm
     where TResponse : notnull
 {
 }
-
