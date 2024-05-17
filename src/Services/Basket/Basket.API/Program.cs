@@ -2,6 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
 var ConnectionString = builder.Configuration.GetConnectionString("Database")!;
 var CacheConnectionString = builder.Configuration.GetConnectionString("Redis")!;
+var GrpcDiscountUrl = builder.Configuration["GrpcSettings:DiscountUrl"]!;
 // Add DI
 
 builder.Services.AddMediatR(config =>
@@ -24,6 +25,11 @@ builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
 builder.Services.AddStackExchangeRedisCache(opt =>
 {
     opt.Configuration = CacheConnectionString;
+});
+
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(opt =>
+{
+    opt.Address = new Uri(GrpcDiscountUrl);
 });
 
 builder.Services.AddHealthChecks()
